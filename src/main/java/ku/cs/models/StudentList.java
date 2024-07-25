@@ -3,7 +3,7 @@ package ku.cs.models;
 import java.util.ArrayList;
 
 public class StudentList {
-    private ArrayList<Student> students;
+    private final ArrayList<Student> students;
 
     public StudentList() {
         students = new ArrayList<>();
@@ -16,6 +16,17 @@ public class StudentList {
             Student exist = findStudentById(id);
             if (exist == null) {
                 students.add(new Student(id.trim(), name.trim()));
+            }
+        }
+    }
+
+    public void addNewStudent(String id, String name, double score) {
+        id = id.trim();
+        name = name.trim();
+        if (!id.equals("") && !name.equals("")) {
+            Student exist = findStudentById(id);
+            if (exist == null) {
+                students.add(new Student(id, name, score));
             }
         }
     }

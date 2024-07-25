@@ -5,10 +5,13 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import ku.cs.models.Student;
 import ku.cs.models.StudentList;
+import ku.cs.services.Datasource;
 import ku.cs.services.FXRouter;
 import ku.cs.services.StudentHardCodeDatasource;
+import ku.cs.services.StudentListFileDatasource;
 
 import java.io.IOException;
 
@@ -17,15 +20,18 @@ public class StudentListController {
     @FXML private Label idLabel;
     @FXML private Label nameLabel;
     @FXML private Label scoreLabel;
+    @FXML private Label errorLabel;
+    @FXML private TextField giveScoreTextField;
 
-    private StudentList studentList;
     private Student selectedStudent;
 
     @FXML
     public void initialize() {
+        clearForm();
         clearStudentInfo();
-        StudentHardCodeDatasource datasource = new StudentHardCodeDatasource();
-        studentList = datasource.readData();
+        // StudentHardCodeDatasource datasource = new StudentHardCodeDatasource();
+        Datasource<StudentList> datasource = new StudentListFileDatasource("data", "student-list.csv");
+        StudentList studentList = datasource.readData();
         showList(studentList);
         studentListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Student>() {
             @Override
@@ -58,12 +64,42 @@ public class StudentListController {
         scoreLabel.setText("");
     }
 
+    private void clearForm() {
+        errorLabel.setText("");
+        giveScoreTextField.setText("");
+    }
+
     @FXML
     public void onBackButtonClick() {
         try {
             FXRouter.goTo("hello");
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @FXML
+    public void onGiveScoreButtonClick()
+    {
+        if (selectedStudent == null) {
+            clearForm();
+            return;
+        }
+
+        try {
+            String scoreText = giveScoreTextField.getText();
+            double score = Double.parseDouble(scoreText); // NumberFormatException
+
+            selectedStudent.addScore(score); // IllegalrgumentException
+
+            clearForm();
+            showStudentInfo(selectedStudent);
+        } catch (NumberFormatException e) {
+            errorLabel.setText("Please enter a valid score");
+            giveScoreTextField.requestFocus();
+            clearForm();
+        } catch (IllegalArgumentException e) {
+            errorLabel.setText(e.getMessage());
         }
     }
 }

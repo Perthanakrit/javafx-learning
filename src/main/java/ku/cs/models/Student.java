@@ -11,6 +11,12 @@ public class Student {
         score = 0;
     }
 
+    public  Student(String id, String name, double score) {
+        this.id = id;
+        this.name = name;
+        this.score = score;
+    }
+
     public void changeName(String name) {
         if (!name.trim().equals("")) {
             this.name = name.trim();
@@ -18,9 +24,10 @@ public class Student {
     }
 
     public void addScore(double score) {
-        if (score > 0) {
-            this.score += score;
+        if (score <= 0) {
+            throw new IllegalArgumentException("Score cannot be less than zero");
         }
+        this.score += score;
     }
 
     // TODO: design grading system for Student

@@ -1,7 +1,8 @@
-module ku.cs.basicjavafx {
+module ku.cs {
     requires javafx.controls;
     requires javafx.fxml;
 
+    exports ku.cs.models;
 
     opens ku.cs.basicjavafx to javafx.fxml;
     exports ku.cs.basicjavafx;
